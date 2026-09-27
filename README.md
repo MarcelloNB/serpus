@@ -1,3 +1,7 @@
+<p align="center">
+    <img src="public/images/serpus-logo.svg" width="120" alt="Logo SerPus">
+</p>
+
 # SerPus — Sistem Elektronik Perpustakaan
 
 Aplikasi perpustakaan sederhana untuk mencatat peminjaman dan pengembalian buku:
