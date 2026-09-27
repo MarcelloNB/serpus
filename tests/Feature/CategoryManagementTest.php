@@ -70,6 +70,19 @@ test('creating a category without a name is rejected', function () {
     $this->assertDatabaseCount('categories', 0);
 });
 
+test('a field with a validation error gets the red border', function () {
+    $this->actingAs(User::factory()->admin()->create())
+        ->withSession(['errors' => [
+            'default' => [
+                'format' => ':message',
+                'messages' => ['name' => ['Nama kategori wajib diisi.']],
+            ],
+        ]])
+        ->get(route('admin.categories.create'))
+        ->assertOk()
+        ->assertSee('border-red-300');
+});
+
 test('creating a category with a name that already exists is rejected', function () {
     Category::factory()->create(['name' => 'Fiksi']);
 

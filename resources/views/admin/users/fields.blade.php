@@ -28,7 +28,7 @@
 </div>
 
 <div>
-    <x-input-label for="password" value="Password" />
+    <x-input-label for="password" value="Kata sandi" />
     <x-text-input
         id="password"
         name="password"
@@ -47,7 +47,8 @@
     <select
         id="role"
         name="role"
-        class="mt-1 block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
+        class="mt-1 block w-full rounded-md"
+        :class="$errors->has('role') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-brand focus:ring-brand'"
         required
     >
         @foreach ($roles as $role)

@@ -47,8 +47,8 @@ test('the data endpoint returns each user with their role label', function () {
     $response->assertOk()->assertJsonPath('recordsTotal', 2);
 
     $labels = array_column($response->json('data'), 'role_label', 'email');
-    expect($labels[$admin->email])->toBe('Administrator')
-        ->and($labels[$peminjam->email])->toBe('Peminjam');
+    expect($labels[$admin->email])->toContain('Administrator')
+        ->and($labels[$peminjam->email])->toContain('Peminjam');
 
     $actions = array_column($response->json('data'), 'aksi', 'email');
     expect($actions[$admin->email])->not->toContain('Hapus')

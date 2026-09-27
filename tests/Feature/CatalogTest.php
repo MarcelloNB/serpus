@@ -78,6 +78,19 @@ test('a user can borrow an available book from the catalog', function () {
         ->and(Loan::where('user_id', $user->getKey())->where('book_id', $book->getKey())->count())->toBe(1);
 });
 
+test('the success alert is shown on the catalog after borrowing', function () {
+    $book = Book::factory()->create(['stock' => 2]);
+
+    $this->actingAs(User::factory()->create())
+        ->from(route('catalog.index'))
+        ->post(route('catalog.borrow', $book))
+        ->assertSessionHas('success');
+
+    $this->get(route('catalog.index'))
+        ->assertOk()
+        ->assertSee('Buku berhasil dipinjam.');
+});
+
 test('borrowing a book whose stock is exhausted is rejected', function () {
     $book = Book::factory()->create(['stock' => 0]);
 

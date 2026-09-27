@@ -12,7 +12,8 @@
                 <select
                     id="user_id"
                     name="user_id"
-                    class="mt-1 block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
+                    class="mt-1 block w-full rounded-md"
+                    :class="$errors->has('user_id') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-brand focus:ring-brand'"
                     required
                 >
                     <option value="">Pilih peminjam</option>
@@ -30,7 +31,8 @@
                 <select
                     id="book_id"
                     name="book_id"
-                    class="mt-1 block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
+                    class="mt-1 block w-full rounded-md"
+                    :class="$errors->has('book_id') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-brand focus:ring-brand'"
                     required
                 >
                     <option value="">Pilih buku</option>

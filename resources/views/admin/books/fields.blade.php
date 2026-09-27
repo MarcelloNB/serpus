@@ -27,12 +27,13 @@
 
 <div>
     <x-input-label for="category_id" value="Kategori" />
-    <select
-        id="category_id"
-        name="category_id"
-        class="mt-1 block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-        required
-    >
+        <select
+            id="category_id"
+            name="category_id"
+            class="mt-1 block w-full rounded-md"
+            :class="$errors->has('category_id') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-brand focus:ring-brand'"
+            required
+        >
         <option value="">Pilih kategori</option>
         @foreach ($categories as $category)
             <option
@@ -66,7 +67,8 @@
         id="description"
         name="description"
         rows="4"
-        class="mt-1 block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
+        class="mt-1 block w-full rounded-md"
+        :class="$errors->has('description') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-brand focus:ring-brand'"
     >{{ old('description', $book?->description) }}</textarea>
     <x-input-error :messages="$errors->get('description')" class="mt-2" />
 </div>

@@ -27,7 +27,7 @@
             </div>
 
             @if ($latestLoans->isEmpty())
-                <p class="px-6 py-8 text-center text-sm text-ink/70">Belum ada peminjaman.</p>
+                <x-empty-state message="Belum ada peminjaman." />
             @else
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm">

@@ -33,7 +33,7 @@ class UserController extends Controller
             ],
             each: fn (array $row) => [
                 ...$row,
-                'role_label' => UserRole::from($row['role'])->label(),
+                'role_label' => view('components.role-badge', ['role' => UserRole::from($row['role'])])->render(),
                 'aksi' => view('admin.users.row-actions', $row)->render(),
             ],
         );
