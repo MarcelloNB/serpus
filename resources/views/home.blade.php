@@ -3,8 +3,11 @@
         <p class="text-sm font-semibold uppercase tracking-wider text-ink/60">Perpustakaan Digital</p>
 
         <h1 class="mx-auto mt-3 max-w-2xl text-3xl font-semibold sm:text-4xl">
-            SerPus — Sistem Peminjaman Buku
+            SerPus
         </h1>
+        <h2 class="mx-auto mt-3 max-w-2xl text-3xl font-semibold sm:text-xl">
+            Sistem Elektronik Perpustakaan
+        </h2>
 
         <p class="mx-auto mt-4 max-w-2xl text-ink/70">
             Telusuri katalog, ajukan peminjaman, dan pantau riwayat pinjaman dalam satu tempat.

@@ -8,7 +8,7 @@ test('the landing page shows the hero, statistics and the latest books', functio
 
     $this->get('/')
         ->assertOk()
-        ->assertSee('SerPus — Sistem Peminjaman Buku')
+        ->assertSee('SerPus — Sistem Elektronik Perpustakaan')
         ->assertSee('Cara Meminjam Buku')
         ->assertSee('Buku Terbaru')
         ->assertSee('Biologi Molekuler')

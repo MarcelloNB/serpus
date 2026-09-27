@@ -1,4 +1,4 @@
-# SerPus — Sistem Peminjaman Buku
+# SerPus — Sistem Elektronik Perpustakaan
 
 Aplikasi perpustakaan sederhana untuk mencatat peminjaman dan pengembalian buku:
 peminjam mencari buku di katalog dan mengajukan peminjaman, admin mencatat

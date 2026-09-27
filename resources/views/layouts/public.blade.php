@@ -89,7 +89,7 @@
 
         <footer class="bg-brand">
             <div class="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 text-xs font-medium text-ink sm:px-6 lg:px-8">
-                <span>SerPus — Sistem Peminjaman Buku</span>
+                <span>SerPus — Sistem Elektronik Perpustakaan</span>
                 <span>&copy; {{ now()->year }}</span>
             </div>
         </footer>
