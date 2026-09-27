@@ -37,15 +37,10 @@ test('the data endpoint renders the dates and the status badge', function () {
         ->and($rows->firstWhere('id', $finished->id)['returned_at_label'])->not->toBe('-');
 });
 
-test('an admin also sees only their own loans on the history endpoint', function () {
-    $admin = User::factory()->admin()->create();
-    $book = Book::factory()->create(['title' => 'Biologi Molekuler']);
-    Loan::factory()->for($admin, 'user')->for($book, 'book')->create();
-    Loan::factory()->for($book, 'book')->create();
-
-    $response = $this->actingAs($admin)->getJson(route('loans.data'));
-
-    $response->assertOk()->assertJsonPath('recordsTotal', 1);
+test('an admin is refused on the history endpoint', function () {
+    $this->actingAs(User::factory()->admin()->create())
+        ->getJson(route('loans.data'))
+        ->assertForbidden();
 });
 
 test('the history page is read-only and offers no return action', function () {
@@ -57,7 +52,7 @@ test('the history page is read-only and offers no return action', function () {
         ->assertDontSee('Kembalikan');
 });
 
-test('the sidebar shows the history menu to both roles', function () {
+test('the sidebar shows the history menu only to peminjam', function () {
     $this->actingAs(User::factory()->create())
         ->get(route('profile.edit'))
         ->assertOk()
@@ -66,5 +61,5 @@ test('the sidebar shows the history menu to both roles', function () {
     $this->actingAs(User::factory()->admin()->create())
         ->get(route('profile.edit'))
         ->assertOk()
-        ->assertSee('Riwayat Peminjaman');
+        ->assertDontSee('Riwayat Peminjaman');
 });
