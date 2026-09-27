@@ -16,14 +16,17 @@ class CatalogController extends Controller
 
     public function index(): View
     {
-        return view('catalog.index');
+        return view('catalog.index', [
+            'books' => Book::with('category')->orderBy('title')->get(),
+        ]);
     }
 
     public function data(Request $request): JsonResponse
     {
         $query = Book::query()
             ->select('books.*', 'categories.name as category_name')
-            ->leftJoin('categories', 'categories.id', '=', 'books.category_id');
+            ->leftJoin('categories', 'categories.id', '=', 'books.category_id')
+            ->orderBy('books.title');
 
         $result = DataTables::make(
             $query,
@@ -36,7 +39,7 @@ class CatalogController extends Controller
             ],
             each: fn (array $row) => [
                 ...$row,
-                'title' => '<a href="'.route('catalog.show', $row['id']).'" class="font-semibold underline-offset-4 hover:underline">'.e($row['title']).'</a>',
+                'title' => '<a href="'.route('catalog.show', $row['id']).'" class="hover:text-ink/70">'.e($row['title']).'</a>',
                 'stock' => view('components.stock-badge', ['stock' => $row['stock']])->render(),
                 'aksi' => view('components.borrow-button', ['id' => $row['id'], 'stock' => $row['stock']])->render(),
             ],

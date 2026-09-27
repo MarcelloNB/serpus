@@ -1,13 +1,16 @@
 <?php
 
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoanHistoryController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
 Route::middleware('non-admin')->group(function () {
-    Route::get('/', [CatalogController::class, 'index'])->name('catalog.index');
+    Route::get('/katalog', [CatalogController::class, 'index'])->name('catalog.index');
     Route::get('/books/data', [CatalogController::class, 'data'])->name('catalog.data');
     Route::get('/books/{book}', [CatalogController::class, 'show'])->name('catalog.show');
 });

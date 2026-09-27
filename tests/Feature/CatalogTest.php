@@ -6,15 +6,20 @@ use App\Models\Loan;
 use App\Models\User;
 
 test('guests see the catalog with the public header and no sidebar', function () {
-    Book::factory()->create();
+    Book::factory()->create(['title' => 'Biologi Molekuler']);
 
     $this->get(route('catalog.index'))
         ->assertOk()
         ->assertSee('Katalog Buku')
+        ->assertSee('Biologi Molekuler')
         ->assertSee('books/data')
         ->assertSee('Masuk')
         ->assertSee('Daftar')
         ->assertDontSee('Riwayat Peminjaman');
+});
+
+test('the catalog is served under the katalog path', function () {
+    $this->get('/katalog')->assertOk()->assertSee('Katalog Buku');
 });
 
 test('the catalog live search filters books without a page reload', function () {

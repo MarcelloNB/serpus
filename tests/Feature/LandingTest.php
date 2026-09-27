@@ -1,0 +1,38 @@
+<?php
+
+use App\Models\Book;
+use App\Models\User;
+
+test('the landing page shows the hero, statistics and the latest books', function () {
+    Book::factory()->create(['title' => 'Biologi Molekuler']);
+
+    $this->get('/')
+        ->assertOk()
+        ->assertSee('SerPus — Sistem Peminjaman Buku')
+        ->assertSee('Cara Meminjam Buku')
+        ->assertSee('Buku Terbaru')
+        ->assertSee('Biologi Molekuler')
+        ->assertSee('Daftar Sekarang');
+});
+
+test('the landing page greets a logged-in peminjam with the catalog link', function () {
+    $this->actingAs(User::factory()->create())
+        ->get('/')
+        ->assertOk()
+        ->assertSee('Buka Katalog')
+        ->assertDontSee('Daftar Sekarang');
+});
+
+test('an admin can open the landing page', function () {
+    $this->actingAs(User::factory()->admin()->create())
+        ->get('/')
+        ->assertOk()
+        ->assertSee('Buka Dashboard')
+        ->assertDontSee('Daftar Sekarang');
+});
+
+test('the landing page shows an empty message without books', function () {
+    $this->get('/')
+        ->assertOk()
+        ->assertSee('Belum ada buku di katalog.');
+});
