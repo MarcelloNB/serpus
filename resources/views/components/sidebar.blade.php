@@ -42,6 +42,17 @@
             >
                 Buku
             </a>
+
+            <a
+                href="{{ route('admin.users.index') }}"
+                @class([
+                    'flex items-center rounded-md px-3 py-2 font-medium transition',
+                    'bg-brand text-ink' => request()->routeIs('admin.users.*'),
+                    'text-white hover:bg-white/10 hover:text-brand' => ! request()->routeIs('admin.users.*'),
+                ])
+            >
+                Pengguna
+            </a>
         @endif
 
         <a
@@ -58,6 +69,6 @@
 
     <div class="border-t border-white/10 px-6 py-4 text-xs text-white/70">
         Masuk sebagai
-        <span class="font-semibold text-brand">{{ auth()->user()->isAdmin() ? 'Administrator' : 'Peminjam' }}</span>
+        <span class="font-semibold text-brand">{{ auth()->user()->role->label() }}</span>
     </div>
 </aside>
