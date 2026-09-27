@@ -3,7 +3,8 @@
 <div class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
     <div class="overflow-x-auto p-4">
         <table
-            data-datatable="{{ $url }}"
+            data-datatable
+            data-url="{{ $url }}"
             data-columns="{{ json_encode($columns) }}"
             data-order="{{ json_encode($order) }}"
             class="w-full text-sm"
