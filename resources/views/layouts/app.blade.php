@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ config('app.name', 'SerPus') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -14,23 +14,71 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-            @include('layouts.navigation')
+    <body class="bg-slate-50 font-sans antialiased text-ink">
+        <div x-data="{ sidebarOpen: false }" class="min-h-screen">
+            <div
+                x-show="sidebarOpen"
+                x-cloak
+                @click="sidebarOpen = false"
+                class="fixed inset-0 z-30 bg-ink/50 lg:hidden"
+                aria-hidden="true"
+            ></div>
 
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
+            <x-sidebar />
+
+            <div class="flex min-h-screen flex-col lg:pl-64">
+                <header class="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-4 border-b border-slate-200 bg-white px-4 lg:px-6">
+                    <button
+                        type="button"
+                        @click="sidebarOpen = ! sidebarOpen"
+                        class="rounded-md p-2 hover:bg-slate-100 lg:hidden"
+                        aria-label="Buka menu navigasi"
+                    >
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+
+                    <div class="min-w-0 flex-1">
+                        @isset($header)
+                            {{ $header }}
+                        @endisset
                     </div>
-                </header>
-            @endisset
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+                    <x-dropdown align="right" width="48">
+                        <x-slot name="trigger">
+                            <button class="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-slate-100">
+                                <span>{{ auth()->user()->name }}</span>
+
+                                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </x-slot>
+
+                        <x-slot name="content">
+                            <x-dropdown-link :href="route('profile.edit')">
+                                Profile
+                            </x-dropdown-link>
+
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+
+                                <x-dropdown-link
+                                    :href="route('logout')"
+                                    onclick="event.preventDefault(); this.closest('form').submit();"
+                                >
+                                    Keluar
+                                </x-dropdown-link>
+                            </form>
+                        </x-slot>
+                    </x-dropdown>
+                </header>
+
+                <main class="flex-1 p-4 lg:p-8">
+                    {{ $slot }}
+                </main>
+            </div>
         </div>
     </body>
 </html>
