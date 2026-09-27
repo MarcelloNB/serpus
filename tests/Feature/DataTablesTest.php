@@ -80,6 +80,19 @@ test('ignores a column filter whose column is not in the allowed list', function
     expect($result['recordsFiltered'])->toBe(2);
 });
 
+test('appends a derived key to every row when a callback is given', function () {
+    Category::factory()->create(['name' => 'Fiksi']);
+
+    $result = DataTables::make(
+        Category::query(),
+        Request::create('/data'),
+        ['name' => 'name'],
+        each: fn (array $row) => [...$row, 'aksi' => '<button>Ubah</button>'],
+    );
+
+    expect($result['data'][0]['aksi'])->toBe('<button>Ubah</button>');
+});
+
 test('orders rows by the requested column and direction', function () {
     Category::factory()->create(['name' => 'Cakra']);
     Category::factory()->create(['name' => 'Anggrek']);

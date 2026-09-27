@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
@@ -16,9 +17,10 @@ class DataTables
      * Susun respons server-side processing DataTables dari query yang diberikan.
      *
      * @param  array<string, string>  $columns  pemetaan key kolom di request ke nama kolom query
+     * @param  null|callable(array<string, mixed>): array<string, mixed>  $each  penambah key turunan per baris
      * @return array{draw: int, recordsTotal: int, recordsFiltered: int, data: list<array<string, mixed>>}
      */
-    public static function make(Builder $query, Request $request, array $columns): array
+    public static function make(Builder $query, Request $request, array $columns, ?Closure $each = null): array
     {
         $draw = max(1, (int) $request->input('draw', 1));
         $start = max(0, (int) $request->input('start', 0));
@@ -31,11 +33,17 @@ class DataTables
 
         $filtered = (clone $query)->count();
 
+        $data = $query->offset($start)->limit($length)->get()->toArray();
+
+        if ($each !== null) {
+            $data = array_map($each, $data);
+        }
+
         return [
             'draw' => $draw,
             'recordsTotal' => $total,
             'recordsFiltered' => $filtered,
-            'data' => $query->offset($start)->limit($length)->get()->toArray(),
+            'data' => $data,
         ];
     }
 
