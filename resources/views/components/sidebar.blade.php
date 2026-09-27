@@ -22,17 +22,6 @@
             </a>
 
             <a
-                href="{{ route('admin.categories.index') }}"
-                @class([
-                    'flex items-center rounded-md px-3 py-2 font-medium transition',
-                    'bg-brand text-ink' => request()->routeIs('admin.categories.*'),
-                    'text-white hover:bg-white/10 hover:text-brand' => ! request()->routeIs('admin.categories.*'),
-                ])
-            >
-                Kategori
-            </a>
-
-            <a
                 href="{{ route('admin.books.index') }}"
                 @class([
                     'flex items-center rounded-md px-3 py-2 font-medium transition',
@@ -41,6 +30,17 @@
                 ])
             >
                 Buku
+            </a>
+
+            <a
+                href="{{ route('admin.categories.index') }}"
+                @class([
+                    'flex items-center rounded-md px-3 py-2 font-medium transition',
+                    'bg-brand text-ink' => request()->routeIs('admin.categories.*'),
+                    'text-white hover:bg-white/10 hover:text-brand' => ! request()->routeIs('admin.categories.*'),
+                ])
+            >
+                Kategori
             </a>
 
             <a
@@ -75,6 +75,17 @@
             ])
         >
             Katalog Buku
+        </a>
+
+        <a
+            href="{{ route('loans.index') }}"
+            @class([
+                'flex items-center rounded-md px-3 py-2 font-medium transition',
+                'bg-brand text-ink' => request()->routeIs('loans.*'),
+                'text-white hover:bg-white/10 hover:text-brand' => ! request()->routeIs('loans.*'),
+            ])
+        >
+            Riwayat Peminjaman
         </a>
     </nav>
 

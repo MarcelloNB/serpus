@@ -47,7 +47,7 @@ class LoanController extends Controller
                 ...$row,
                 'borrowed_at_label' => self::formatDate($row['borrowed_at']),
                 'returned_at_label' => self::formatDate($row['returned_at']),
-                'status_label' => view('admin.loans.status-badge', [
+                'status_label' => view('components.loan-status-badge', [
                     'status' => LoanStatus::from($row['status']),
                 ])->render(),
                 'aksi' => view('admin.loans.row-actions', $row)->render(),
