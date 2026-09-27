@@ -5,3 +5,7 @@
 [x-cloak] {
     display: none !important;
 }
+
+div.dt-container select.dt-input {
+    padding-right: 2.5rem;
+}

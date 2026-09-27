@@ -5,19 +5,19 @@
 
     <div class="space-y-6">
         <div class="grid gap-4 sm:grid-cols-3">
-            <div class="rounded-lg border border-slate-200 bg-white p-6">
-                <p class="text-sm text-ink/70">Total Buku</p>
-                <p class="mt-1 text-2xl font-semibold">{{ $totalBooks }}</p>
+            <div class="rounded-lg border border-sky-200 bg-sky-100 p-6">
+                <p class="text-sm font-medium text-sky-700">Total Buku</p>
+                <p class="mt-1 text-2xl font-semibold text-sky-900">{{ $totalBooks }}</p>
             </div>
 
-            <div class="rounded-lg border border-slate-200 bg-white p-6">
-                <p class="text-sm text-ink/70">Sedang Dipinjam</p>
-                <p class="mt-1 text-2xl font-semibold">{{ $activeLoans }}</p>
+            <div class="rounded-lg border border-emerald-200 bg-emerald-100 p-6">
+                <p class="text-sm font-medium text-emerald-700">Sedang Dipinjam</p>
+                <p class="mt-1 text-2xl font-semibold text-emerald-900">{{ $activeLoans }}</p>
             </div>
 
-            <div class="rounded-lg border border-slate-200 bg-white p-6">
-                <p class="text-sm text-ink/70">Total Pengguna</p>
-                <p class="mt-1 text-2xl font-semibold">{{ $totalUsers }}</p>
+            <div class="rounded-lg border border-amber-200 bg-amber-100 p-6">
+                <p class="text-sm font-medium text-amber-700">Total Pengguna</p>
+                <p class="mt-1 text-2xl font-semibold text-amber-900">{{ $totalUsers }}</p>
             </div>
         </div>
 
