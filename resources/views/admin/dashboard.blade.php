@@ -3,10 +3,57 @@
         <h1 class="truncate text-lg font-semibold">Dashboard Admin</h1>
     </x-slot>
 
-    <div class="rounded-lg border border-slate-200 bg-white p-6">
-        <h2 class="text-base font-semibold">Selamat datang, {{ auth()->user()->name }}</h2>
-        <p class="mt-1 text-sm text-ink/70">
-            Kelola data buku, kategori, dan pengguna, serta pantau peminjaman yang sedang berjalan melalui menu di samping.
-        </p>
+    <div class="space-y-6">
+        <div class="grid gap-4 sm:grid-cols-3">
+            <div class="rounded-lg border border-slate-200 bg-white p-6">
+                <p class="text-sm text-ink/70">Total Buku</p>
+                <p class="mt-1 text-2xl font-semibold">{{ $totalBooks }}</p>
+            </div>
+
+            <div class="rounded-lg border border-slate-200 bg-white p-6">
+                <p class="text-sm text-ink/70">Sedang Dipinjam</p>
+                <p class="mt-1 text-2xl font-semibold">{{ $activeLoans }}</p>
+            </div>
+
+            <div class="rounded-lg border border-slate-200 bg-white p-6">
+                <p class="text-sm text-ink/70">Total Pengguna</p>
+                <p class="mt-1 text-2xl font-semibold">{{ $totalUsers }}</p>
+            </div>
+        </div>
+
+        <div class="rounded-lg border border-slate-200 bg-white">
+            <div class="border-b border-slate-200 px-6 py-4">
+                <h2 class="text-base font-semibold">Peminjaman Terbaru</h2>
+            </div>
+
+            @if ($latestLoans->isEmpty())
+                <p class="px-6 py-8 text-center text-sm text-ink/70">Belum ada peminjaman.</p>
+            @else
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-200 text-xs uppercase text-ink/70">
+                                <th class="px-6 py-3 font-medium">Peminjam</th>
+                                <th class="px-6 py-3 font-medium">Buku</th>
+                                <th class="px-6 py-3 font-medium">Tanggal Pinjam</th>
+                                <th class="px-6 py-3 font-medium">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            @foreach ($latestLoans as $loan)
+                                <tr>
+                                    <td class="px-6 py-3">{{ $loan->user->name }}</td>
+                                    <td class="px-6 py-3">{{ $loan->book->title }}</td>
+                                    <td class="px-6 py-3">{{ $loan->borrowed_at->format('d/m/Y H:i') }}</td>
+                                    <td class="px-6 py-3">
+                                        <x-loan-status-badge :status="$loan->status" />
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        </div>
     </div>
 </x-app-layout>
