@@ -1,58 +1,129 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SerPus — Sistem Peminjaman Buku
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi perpustakaan sederhana untuk mencatat peminjaman dan pengembalian buku:
+peminjam mencari buku di katalog dan mengajukan peminjaman, admin mencatat
+pengembalian serta mengelola data buku, kategori, dan pengguna.
 
-## About Laravel
+Dibangun dengan **Laravel 13**, **PHP 8.5**, **MySQL**, **Blade**, dan **JavaScript**
+(Tailwind CSS, Alpine.js, DataTables tanpa jQuery).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Fitur
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**Publik (tamu)**
+- Landing page company-profile: hero, statistik perpustakaan, 3 langkah cara meminjam, buku terbaru.
+- Katalog buku berbentuk kartu (grid 4 kolom) dengan **live search AJAX** tanpa reload halaman.
+- Halaman detail buku (judul, penulis, kategori, deskripsi, stok).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**Peminjam**
+- Registrasi otomatis ber peran `peminjam`; profil dapat diperbarui.
+- Meminjam buku dari halaman detail (stok berkurang, ada validasi stok habis).
+- Riwayat peminjaman pribadi (read-only, pengembalian dicatat admin).
+- Menu sidebar: Katalog Buku dan Riwayat Peminjaman.
 
-## Learning Laravel
+**Admin**
+- Dashboard: statistik pastel (total buku, sedang dipinjam, total pengguna) + peminjaman terbaru.
+- CRUD Buku, Kategori, dan Pengguna dengan **DataTables server-side** (urut, cari, paginasi di server).
+- Mencatat peminjaman manual dan **pengembalian** — stok buku dikembalikan dalam satu
+  transaksi database dengan penguncian baris (`lockForUpdate`) agar tidak terjadi race condition.
+- Menu sidebar: Dashboard, Buku, Kategori, Pengguna, Peminjaman.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+**Otorisasi & validasi**
+- Pembatasan akses lewat middleware, tanpa Gate/policy:
+  - `admin` — hanya admin yang boleh membuka `/admin/*` (lainnya 403).
+  - `non-admin` — admin **tidak** bisa membuka katalog (`/katalog`, `/books/*`) dan
+    riwayat (`/loans*`); tamu dan peminjam tetap bisa.
+- Validasi server-side memakai Form Request di seluruh endpoint tulis.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Kebutuhan
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+- PHP >= 8.5 dan Composer
+- MySQL
+- Node.js 22+ dan npm
 
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Instalasi
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer install
+cp .env.example .env
+php artisan key:generate
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Isi kredensial database di `.env` (`DB_CONNECTION`, `DB_DATABASE`, `DB_USERNAME`,
+`DB_PASSWORD`), lalu:
 
-## Contributing
+```bash
+php artisan migrate --seed
+npm install
+npm run build
+php artisan serve
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Buka `http://127.0.0.1:8000`.
 
-## Code of Conduct
+> `php artisan migrate:fresh --seed` **menghapus seluruh data** — hanya untuk
+> database pengembangan.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Akun bawaan (hasil seeder)
 
-## Security Vulnerabilities
+| Peran     | Email               | Password |
+|-----------|---------------------|----------|
+| Admin     | `admin@serpus.test` | `password` |
+| Peminjam  | `peminjam@serpus.test` | `password` |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Pengguna lain dapat mendaftar sendiri melalui halaman **Daftar** (otomatis peminjam).
 
-## License
+## Struktur proyek
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```
+app/
+├── Enums/                  UserRole, LoanStatus
+├── Http/
+│   ├── Controllers/        Catalog, Home, LoanHistory, Profile, Admin/*, Auth/*
+│   ├── Middleware/         EnsureUserIsAdmin, EnsureUserIsNotAdmin
+│   └── Requests/           Form Request untuk validasi server-side
+├── Services/LoanService    Logika pinjam/buku stok (transaksi + lockForUpdate)
+└── Support/DataTables      Pembungkus respons server-side processing DataTables
+
+database/
+├── migrations/             users(+role), categories, books, loans
+└── seeders/                UserSeeder, CategorySeeder, BookSeeder
+
+resources/
+├── views/                  Blade: layouts, components, catalog, admin, auth, home
+├── css/app.css             Tailwind + aturan khusus container DataTables
+└── js/app.js               Alpine, inisialisasi DataTables, live search katalog
+
+routes/
+├── web.php                 Landing, katalog, riwayat, profil, /dashboard (redirect per peran)
+├── admin.php               Grup /admin dengan middleware admin
+└── auth.php                Rute autentikasi Breeze
+```
+
+### Skema database
+
+- `users` — nama, email, password, `role` (`admin` | `peminjam`).
+- `categories` — nama kategori buku.
+- `books` — judul, penulis, deskripsi, stok, `category_id` (FK ke `categories`).
+- `loans` — `user_id`, `book_id`, status (`dipinjam` | `dikembalikan`),
+  `borrowed_at`, `returned_at`.
+
+## Menjalankan pengujian
+
+Proyek memakai **Pest** (SQLite in-memory, terpisah dari MySQL development).
+
+```bash
+php artisan test --compact      # 133 test, 500 assertions
+vendor/bin/pint --dirty         # format kode mengikuti Laravel Pint
+npm run build                   # bundel aset produksi
+```
+
+## Teknologi
+
+| Bagian    | Teknologi |
+|-----------|-----------|
+| Backend   | Laravel 13, PHP 8.5, MySQL |
+| Autentikasi | Laravel Breeze (stack Blade) |
+| Frontend  | Blade, Tailwind CSS 3 (+ plugin forms), Alpine.js |
+| Tabel data| DataTables 3 (server-side processing, tanpa jQuery) |
+| Pengujian | Pest, Laravel Dusk tidak digunakan |
+| Build     | Vite |
