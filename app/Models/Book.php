@@ -13,7 +13,7 @@ class Book extends Model
     /** @use HasFactory<BookFactory> */
     use HasFactory;
 
-    protected $fillable = ['category_id', 'title', 'author', 'description', 'stock'];
+    protected $fillable = ['category_id', 'title', 'author', 'description', 'cover_image', 'stock'];
 
     protected function casts(): array
     {

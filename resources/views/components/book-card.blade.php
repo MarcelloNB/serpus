@@ -1,6 +1,19 @@
 @props(['book'])
 
 <div class="flex flex-col rounded-lg border border-slate-200 bg-white p-4 transition hover:border-brand hover:shadow-sm">
+    @if ($book->cover_image)
+        <img
+            src="{{ asset('storage/'.$book->cover_image) }}"
+            alt="Sampul {{ $book->title }}"
+            class="mb-3 h-40 w-full rounded-md object-cover"
+            loading="lazy"
+        />
+    @else
+        <div class="mb-3 flex h-40 w-full items-center justify-center rounded-md bg-slate-100 text-ink/40">
+            <x-icon name="book" class="h-10 w-10" />
+        </div>
+    @endif
+
     <h3 class="text-sm font-semibold leading-snug">
         <a href="{{ route('catalog.show', $book) }}" class="hover:text-ink/70">{{ $book->title }}</a>
     </h3>

@@ -4,7 +4,7 @@
     </x-slot>
 
     <div class="max-w-2xl rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-        <form method="POST" action="{{ route('admin.books.update', $book) }}" class="space-y-4">
+        <form method="POST" action="{{ route('admin.books.update', $book) }}" enctype="multipart/form-data" class="space-y-4">
             @csrf
             @method('PUT')
 

@@ -53,6 +53,7 @@ Isi kredensial database di `.env` (`DB_CONNECTION`, `DB_DATABASE`, `DB_USERNAME`
 
 ```bash
 php artisan migrate --seed
+php artisan storage:link
 npm install
 npm run build
 php artisan serve

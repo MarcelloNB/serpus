@@ -11,6 +11,7 @@ use App\Support\DataTables;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class BookController extends Controller
@@ -55,7 +56,13 @@ class BookController extends Controller
 
     public function store(StoreBookRequest $request): RedirectResponse
     {
-        Book::create($request->validated());
+        $data = $request->validated();
+
+        if ($request->hasFile('cover_image')) {
+            $data['cover_image'] = $request->file('cover_image')->store('covers', 'public');
+        }
+
+        Book::create($data);
 
         return to_route('admin.books.index')->with('success', 'Buku berhasil ditambahkan.');
     }
@@ -70,13 +77,28 @@ class BookController extends Controller
 
     public function update(UpdateBookRequest $request, Book $book): RedirectResponse
     {
-        $book->update($request->validated());
+        $data = $request->validated();
+        $oldCover = $book->cover_image;
+
+        if ($request->hasFile('cover_image')) {
+            $data['cover_image'] = $request->file('cover_image')->store('covers', 'public');
+        }
+
+        $book->update($data);
+
+        if ($request->hasFile('cover_image') && $oldCover) {
+            Storage::disk('public')->delete($oldCover);
+        }
 
         return to_route('admin.books.index')->with('success', 'Buku berhasil diperbarui.');
     }
 
     public function destroy(Book $book): RedirectResponse
     {
+        if ($book->cover_image) {
+            Storage::disk('public')->delete($book->cover_image);
+        }
+
         $book->delete();
 
         return to_route('admin.books.index')->with('success', 'Buku berhasil dihapus.');

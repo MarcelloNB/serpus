@@ -4,6 +4,14 @@
     </a>
 
     <div class="mt-4 rounded-lg border border-slate-200 bg-white p-6">
+        @if ($book->cover_image)
+            <img
+                src="{{ asset('storage/'.$book->cover_image) }}"
+                alt="Sampul {{ $book->title }}"
+                class="mb-4 h-64 w-full rounded-md object-cover"
+            />
+        @endif
+
         <div class="flex flex-wrap items-start justify-between gap-4">
             <div>
                 <h2 class="text-xl font-semibold">{{ $book->title }}</h2>

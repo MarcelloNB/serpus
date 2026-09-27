@@ -207,3 +207,33 @@ test('a logged-in user sees the sidebar on the catalog', function () {
         ->assertOk()
         ->assertSee('Riwayat Peminjaman');
 });
+
+test('a book cover is shown on the catalog, detail page and data endpoint', function () {
+    $book = Book::factory()->create([
+        'title' => 'Bergambar',
+        'cover_image' => 'covers/bergambar.jpg',
+    ]);
+
+    $this->get(route('catalog.index'))
+        ->assertOk()
+        ->assertSee('storage/covers/bergambar.jpg');
+
+    $this->get(route('catalog.show', $book))
+        ->assertOk()
+        ->assertSee('storage/covers/bergambar.jpg');
+
+    $response = $this->getJson(route('catalog.data', ['draw' => 1]));
+
+    $response->assertOk();
+    expect($response->json('data.0.cover_url'))->toContain('storage/covers/bergambar.jpg')
+        ->and($response->json('data.0.title_text'))->toBe('Bergambar');
+});
+
+test('a book without a cover shows a placeholder instead of an image', function () {
+    Book::factory()->create(['title' => 'Tanpa Sampul', 'cover_image' => null]);
+
+    $this->get(route('catalog.index'))
+        ->assertOk()
+        ->assertDontSee('storage/covers/', false)
+        ->assertSee('Tanpa Sampul');
+});

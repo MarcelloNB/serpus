@@ -72,3 +72,23 @@
     >{{ old('description', $book?->description) }}</textarea>
     <x-input-error :messages="$errors->get('description')" class="mt-2" />
 </div>
+
+<div>
+    <x-input-label for="cover_image" value="Sampul buku" />
+    <input
+        id="cover_image"
+        name="cover_image"
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        class="mt-1 block w-full text-sm text-ink"
+    />
+    @if ($book?->cover_image)
+        <img
+            src="{{ asset('storage/'.$book->cover_image) }}"
+            alt="Sampul {{ $book->title }}"
+            class="mt-2 h-32 rounded-md object-cover"
+        />
+    @endif
+    <p class="mt-1 text-xs text-ink/60">Format JPG, PNG, atau WEBP. Maksimal 2 MB.</p>
+    <x-input-error :messages="$errors->get('cover_image')" class="mt-2" />
+</div>

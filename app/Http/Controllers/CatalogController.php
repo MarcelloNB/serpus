@@ -49,6 +49,8 @@ class CatalogController extends Controller
             ],
             each: fn (array $row) => [
                 ...$row,
+                'title_text' => $row['title'],
+                'cover_url' => $row['cover_image'] ? asset('storage/'.$row['cover_image']) : null,
                 'title' => '<a href="'.route('catalog.show', $row['id']).'" class="hover:text-ink/70">'.e($row['title']).'</a>',
                 'stock' => view('components.stock-badge', ['stock' => $row['stock']])->render(),
                 'aksi' => view('components.borrow-button', ['id' => $row['id'], 'stock' => $row['stock']])->render(),

@@ -3,6 +3,8 @@
 use App\Models\Book;
 use App\Models\Category;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 test('guests are redirected to login from the book routes', function () {
     $book = Book::factory()->create();
@@ -188,4 +190,80 @@ test('the book forms render for an admin', function () {
         ->assertOk()
         ->assertSee('Ubah Buku')
         ->assertSee('Biologi Molekuler');
+});
+
+test('an admin can upload a book cover', function () {
+    Storage::fake('public');
+    $category = Category::factory()->create();
+
+    $this->actingAs(User::factory()->admin()->create())
+        ->post(route('admin.books.store'), [
+            'title' => 'Fisika Kelas X',
+            'author' => 'Ahmad Hidayat',
+            'stock' => 5,
+            'category_id' => $category->id,
+            'cover_image' => UploadedFile::fake()->image('cover.jpg'),
+        ])
+        ->assertRedirect(route('admin.books.index'))
+        ->assertSessionHas('success');
+
+    $book = Book::where('title', 'Fisika Kelas X')->firstOrFail();
+
+    expect($book->cover_image)->toStartWith('covers/');
+
+    Storage::disk('public')->assertExists($book->cover_image);
+});
+
+test('a book cover must be a valid image', function () {
+    $category = Category::factory()->create();
+
+    $this->actingAs(User::factory()->admin()->create())
+        ->post(route('admin.books.store'), [
+            'title' => 'Fisika Kelas X',
+            'author' => 'Ahmad Hidayat',
+            'stock' => 5,
+            'category_id' => $category->id,
+            'cover_image' => UploadedFile::fake()->create('dokumen.pdf', 100),
+        ])
+        ->assertSessionHasErrors('cover_image');
+
+    $this->assertDatabaseCount('books', 0);
+});
+
+test('replacing the cover deletes the old file', function () {
+    Storage::fake('public');
+    $category = Category::factory()->create();
+    $book = Book::factory()->for($category, 'category')->create([
+        'cover_image' => 'covers/old.jpg',
+    ]);
+    Storage::disk('public')->put('covers/old.jpg', 'isi-lama');
+
+    $this->actingAs(User::factory()->admin()->create())
+        ->put(route('admin.books.update', $book), [
+            'title' => $book->title,
+            'author' => $book->author,
+            'stock' => $book->stock,
+            'category_id' => $category->id,
+            'cover_image' => UploadedFile::fake()->image('baru.jpg'),
+        ])
+        ->assertRedirect(route('admin.books.index'))
+        ->assertSessionHas('success');
+
+    Storage::disk('public')->assertMissing('covers/old.jpg');
+    expect($book->refresh()->cover_image)->toStartWith('covers/');
+    Storage::disk('public')->assertExists($book->cover_image);
+});
+
+test('deleting a book removes its cover file', function () {
+    Storage::fake('public');
+    $book = Book::factory()->create(['cover_image' => 'covers/sampul.jpg']);
+    Storage::disk('public')->put('covers/sampul.jpg', 'isi');
+
+    $this->actingAs(User::factory()->admin()->create())
+        ->delete(route('admin.books.destroy', $book))
+        ->assertRedirect(route('admin.books.index'))
+        ->assertSessionHas('success');
+
+    Storage::disk('public')->assertMissing('covers/sampul.jpg');
+    $this->assertDatabaseMissing('books', ['id' => $book->id]);
 });
