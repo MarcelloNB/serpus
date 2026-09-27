@@ -6,7 +6,7 @@
     <div class="mb-4 flex justify-end">
         <a
             href="{{ route('admin.loans.create') }}"
-            class="rounded-md bg-ink px-4 py-2 text-sm font-semibold text-white hover:bg-ink/90"
+            class="rounded-md bg-ocean px-4 py-2 text-sm font-semibold text-white hover:bg-ocean/90"
         >
             Tambah Peminjaman
         </a>

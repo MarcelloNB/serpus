@@ -15,6 +15,7 @@ export default {
             colors: {
                 brand: '#C0E8F9',
                 ink: '#465362',
+                ocean: '#0F6FA8',
             },
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],

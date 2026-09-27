@@ -18,7 +18,7 @@
             @guest
                 <a
                     href="{{ route('register') }}"
-                    class="rounded-md bg-ink px-5 py-2.5 text-sm font-semibold text-white hover:bg-ink/90 focus:ring-2 focus:ring-brand"
+                    class="rounded-md bg-ocean px-5 py-2.5 text-sm font-semibold text-white hover:bg-ocean/90 focus:ring-2 focus:ring-brand"
                 >
                     Daftar Sekarang
                 </a>
@@ -31,14 +31,14 @@
             @elseif (auth()->user()->isAdmin())
                 <a
                     href="{{ route('admin.dashboard') }}"
-                    class="rounded-md bg-ink px-5 py-2.5 text-sm font-semibold text-white hover:bg-ink/90 focus:ring-2 focus:ring-brand"
+                    class="rounded-md bg-ocean px-5 py-2.5 text-sm font-semibold text-white hover:bg-ocean/90 focus:ring-2 focus:ring-brand"
                 >
                     Buka Dashboard
                 </a>
             @else
                 <a
                     href="{{ route('catalog.index') }}"
-                    class="rounded-md bg-ink px-5 py-2.5 text-sm font-semibold text-white hover:bg-ink/90 focus:ring-2 focus:ring-brand"
+                    class="rounded-md bg-ocean px-5 py-2.5 text-sm font-semibold text-white hover:bg-ocean/90 focus:ring-2 focus:ring-brand"
                 >
                     Buka Katalog
                 </a>
@@ -92,7 +92,7 @@
             <h2 class="text-lg font-semibold">Buku Terbaru</h2>
 
             <a href="{{ route('catalog.index') }}" class="text-sm font-semibold text-ink/70 hover:text-ink">
-                Lihat semua →
+                Lihat semua â†’
             </a>
         </div>
 

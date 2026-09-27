@@ -11,7 +11,7 @@
                 data-catalog-search
                 data-url="{{ route('catalog.data') }}"
                 value="{{ request('search.value') }}"
-                placeholder="Cari judul atau penulis…"
+                placeholder="Cari judul atau penulisâ€¦"
                 aria-label="Cari buku"
                 class="w-full rounded-md border-slate-300 py-2 pl-9 pr-3 text-sm placeholder:text-ink/50 focus:border-ink focus:ring-brand"
             >
@@ -53,7 +53,7 @@
 
         <button
             type="submit"
-            class="rounded-md bg-ink px-4 py-2 text-sm font-semibold text-white hover:bg-ink/90 focus:ring-2 focus:ring-brand"
+            class="rounded-md bg-ocean px-4 py-2 text-sm font-semibold text-white hover:bg-ocean/90 focus:ring-2 focus:ring-brand"
         >
             Terapkan
         </button>

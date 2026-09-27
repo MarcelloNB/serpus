@@ -15,12 +15,12 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="flex min-h-screen flex-col bg-white font-sans antialiased text-ink">
-        <header class="bg-ink text-white">
+        <header class="bg-ocean text-white">
             <div class="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2 sm:px-6 lg:px-8">
                 <div class="flex items-center gap-4">
                     <a href="{{ route('home') }}" class="flex items-center gap-2">
                         <span class="flex h-8 w-8 items-center justify-center rounded-md bg-brand text-sm font-bold text-ink">S</span>
-                        <span class="text-lg font-semibold tracking-wide text-brand">SerPus</span>
+                        <span class="text-lg font-semibold tracking-wide text-white">SerPus</span>
                     </a>
 
                     <nav class="flex items-center gap-1 text-sm">
@@ -28,8 +28,8 @@
                             href="{{ route('home') }}"
                             @class([
                                 'rounded-md px-3 py-2 font-medium transition',
-                                'bg-white/10 text-brand' => request()->routeIs('home'),
-                                'text-white/80 hover:bg-white/10 hover:text-brand' => ! request()->routeIs('home'),
+                                'bg-brand text-ink' => request()->routeIs('home'),
+                                'text-white hover:bg-white/10' => ! request()->routeIs('home'),
                             ])
                         >
                             Beranda
@@ -38,8 +38,8 @@
                             href="{{ route('catalog.index') }}"
                             @class([
                                 'rounded-md px-3 py-2 font-medium transition',
-                                'bg-white/10 text-brand' => request()->routeIs('catalog.*'),
-                                'text-white/80 hover:bg-white/10 hover:text-brand' => ! request()->routeIs('catalog.*'),
+                                'bg-brand text-ink' => request()->routeIs('catalog.*'),
+                                'text-white hover:bg-white/10' => ! request()->routeIs('catalog.*'),
                             ])
                         >
                             Katalog

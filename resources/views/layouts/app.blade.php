@@ -20,7 +20,7 @@
                 x-show="sidebarOpen"
                 x-cloak
                 @click="sidebarOpen = false"
-                class="fixed inset-0 z-30 bg-ink/50 lg:hidden"
+                class="fixed inset-0 z-30 bg-ocean/50 lg:hidden"
                 aria-hidden="true"
             ></div>
 
