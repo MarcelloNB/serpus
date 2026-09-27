@@ -37,6 +37,24 @@ test('an admin sees the user list wired to its data endpoint', function () {
         ->assertSee('users/data');
 });
 
+test('the user forms offer password helpers', function () {
+    $user = User::factory()->create();
+    $admin = User::factory()->admin()->create();
+
+    $this->actingAs($admin)
+        ->get(route('admin.users.create'))
+        ->assertOk()
+        ->assertSee('Buatkan')
+        ->assertSee('Tampilkan kata sandi')
+        ->assertSee('Minimal 8 karakter.');
+
+    $this->actingAs($admin)
+        ->get(route('admin.users.edit', $user))
+        ->assertOk()
+        ->assertSee('Buatkan')
+        ->assertSee('Kosongkan kolom ini jika tidak ingin mengganti password.');
+});
+
 test('the data endpoint returns each user with their role label', function () {
     $admin = User::factory()->admin()->create();
     $peminjam = User::factory()->create();

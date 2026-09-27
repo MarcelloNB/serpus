@@ -29,15 +29,17 @@
 
 <div>
     <x-input-label for="password" value="Kata sandi" />
-    <x-text-input
+    <x-password-input
         id="password"
         name="password"
-        type="password"
         class="mt-1 block w-full"
-        @if (! $user?->exists) required @endif
+        :required="! $user?->exists"
+        generate
     />
     @if ($user?->exists)
         <p class="mt-1 text-xs text-ink/60">Kosongkan kolom ini jika tidak ingin mengganti password.</p>
+    @else
+        <p class="mt-1 text-xs text-ink/60">Minimal 8 karakter.</p>
     @endif
     <x-input-error :messages="$errors->get('password')" class="mt-2" />
 </div>
