@@ -22,6 +22,63 @@ test('the catalog is served under the katalog path', function () {
     $this->get('/katalog')->assertOk()->assertSee('Katalog Buku');
 });
 
+test('the catalog filters books by category', function () {
+    $sains = Category::factory()->create();
+    $komik = Category::factory()->create();
+    Book::factory()->for($sains, 'category')->create(['title' => 'Biologi Molekuler']);
+    Book::factory()->for($komik, 'category')->create(['title' => 'Naruto']);
+
+    $this->get(route('catalog.index', ['kategori' => $sains->getKey()]))
+        ->assertOk()
+        ->assertSee('Biologi Molekuler')
+        ->assertDontSee('Naruto');
+});
+
+test('the catalog filters books by stock', function () {
+    Book::factory()->create(['title' => 'Matematika', 'stock' => 2]);
+    Book::factory()->create(['title' => 'Ensiklopedia', 'stock' => 0]);
+
+    $this->get(route('catalog.index', ['stok' => 'tersedia']))
+        ->assertOk()
+        ->assertSee('Matematika')
+        ->assertDontSee('Ensiklopedia');
+
+    $this->get(route('catalog.index', ['stok' => 'habis']))
+        ->assertOk()
+        ->assertSee('Ensiklopedia')
+        ->assertDontSee('Matematika');
+});
+
+test('the search form filters the server-rendered catalog without javascript', function () {
+    Book::factory()->create(['title' => 'Biologi Molekuler', 'author' => 'Darno']);
+    Book::factory()->create(['title' => 'Algoritma Struktur Data', 'author' => 'Andra']);
+
+    $this->get(route('catalog.index', ['search' => ['value' => 'Biologi']]))
+        ->assertOk()
+        ->assertSee('Biologi Molekuler')
+        ->assertDontSee('Algoritma Struktur Data');
+});
+
+test('the data endpoint applies the category and stock filters', function () {
+    $sains = Category::factory()->create();
+    $komik = Category::factory()->create();
+    Book::factory()->for($sains, 'category')->create(['stock' => 3]);
+    Book::factory()->for($sains, 'category')->create(['stock' => 0]);
+    Book::factory()->for($komik, 'category')->create(['stock' => 3]);
+
+    $this->getJson(route('catalog.data', ['kategori' => $sains->getKey()]))
+        ->assertOk()
+        ->assertJsonPath('recordsTotal', 2);
+
+    $this->getJson(route('catalog.data', ['stok' => 'habis']))
+        ->assertOk()
+        ->assertJsonPath('recordsTotal', 1);
+
+    $this->getJson(route('catalog.data', ['kategori' => $sains->getKey(), 'stok' => 'tersedia']))
+        ->assertOk()
+        ->assertJsonPath('recordsTotal', 1);
+});
+
 test('the catalog live search filters books without a page reload', function () {
     Book::factory()->create(['title' => 'Biologi Molekuler']);
     Book::factory()->create(['title' => 'Algoritma Struktur Data']);

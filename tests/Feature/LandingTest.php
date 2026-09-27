@@ -36,3 +36,13 @@ test('the landing page shows an empty message without books', function () {
         ->assertOk()
         ->assertSee('Belum ada buku di katalog.');
 });
+
+test('the public navbar links the landing page and the catalog', function () {
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('href="'.route('catalog.index').'"', false);
+
+    $this->get(route('catalog.index'))
+        ->assertOk()
+        ->assertSee('href="'.route('home').'"', false);
+});

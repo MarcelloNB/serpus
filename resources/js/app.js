@@ -33,23 +33,39 @@ document.querySelectorAll('table[data-datatable]').forEach((table) => {
     });
 });
 
+const catalogForm = document.querySelector('[data-catalog-form]');
 const catalogSearch = document.querySelector('[data-catalog-search]');
 const catalogGrid = document.querySelector('[data-catalog-grid]');
 
-if (catalogSearch && catalogGrid) {
+if (catalogForm && catalogSearch && catalogGrid) {
     let searchTimer;
 
     catalogSearch.addEventListener('input', () => {
         window.clearTimeout(searchTimer);
-        searchTimer = window.setTimeout(() => searchBooks(catalogSearch.value), 300);
+        searchTimer = window.setTimeout(() => fetchBooks(), 300);
+    });
+
+    catalogForm.querySelectorAll('[data-catalog-filter]').forEach((filter) => {
+        filter.addEventListener('change', () => fetchBooks());
+    });
+
+    catalogForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        fetchBooks();
     });
 }
 
-async function searchBooks(keyword) {
+async function fetchBooks() {
     const url = new URL(catalogSearch.dataset.url, window.location.origin);
+    const params = new URLSearchParams(new FormData(catalogForm));
 
-    url.searchParams.set('search[value]', keyword);
     url.searchParams.set('length', '100');
+
+    params.forEach((value, key) => {
+        if (value !== '') {
+            url.searchParams.set(key, value);
+        }
+    });
 
     const response = await fetch(url);
     const payload = await response.json();

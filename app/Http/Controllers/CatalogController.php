@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
+use App\Models\Category;
 use App\Services\LoanService;
 use App\Support\DataTables;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,10 +16,16 @@ class CatalogController extends Controller
 {
     public function __construct(private readonly LoanService $loans) {}
 
-    public function index(): View
+    public function index(Request $request): View
     {
+        $query = Book::query()->with('category')->orderBy('title');
+
+        self::applyKeyword($query, $request);
+        self::applyFilters($query, $request);
+
         return view('catalog.index', [
-            'books' => Book::with('category')->orderBy('title')->get(),
+            'books' => $query->get(),
+            'categories' => Category::orderBy('name')->get(),
         ]);
     }
 
@@ -27,6 +35,8 @@ class CatalogController extends Controller
             ->select('books.*', 'categories.name as category_name')
             ->leftJoin('categories', 'categories.id', '=', 'books.category_id')
             ->orderBy('books.title');
+
+        self::applyFilters($query, $request);
 
         $result = DataTables::make(
             $query,
@@ -60,5 +70,34 @@ class CatalogController extends Controller
         $this->loans->borrow($request->user(), $book);
 
         return back()->with('success', 'Buku berhasil dipinjam.');
+    }
+
+    private static function applyKeyword(Builder $query, Request $request): void
+    {
+        $keyword = trim((string) $request->input('search.value'));
+
+        if ($keyword === '') {
+            return;
+        }
+
+        $query->where(function (Builder $group) use ($keyword) {
+            $group->where('books.title', 'like', '%'.$keyword.'%')
+                ->orWhere('books.author', 'like', '%'.$keyword.'%');
+        });
+    }
+
+    private static function applyFilters(Builder $query, Request $request): void
+    {
+        if ($request->filled('kategori')) {
+            $query->where('books.category_id', $request->integer('kategori'));
+        }
+
+        $stock = $request->string('stok')->toString();
+
+        if ($stock === 'tersedia') {
+            $query->where('books.stock', '>', 0);
+        } elseif ($stock === 'habis') {
+            $query->where('books.stock', 0);
+        }
     }
 }
