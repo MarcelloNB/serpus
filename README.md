@@ -16,7 +16,7 @@ Dibangun dengan **Laravel 13**, **PHP 8.5**, **MySQL**, **Blade**, dan **JavaScr
 **Publik (tamu)**
 - Landing page company-profile: hero, statistik perpustakaan, 3 langkah cara meminjam, buku terbaru.
 - Katalog buku berbentuk kartu (grid 4 kolom) dengan **live search AJAX** tanpa reload halaman.
-- Halaman detail buku (judul, penulis, kategori, deskripsi, stok).
+- Halaman detail buku (sampul, judul, penulis, kategori, deskripsi, stok).
 
 **Peminjam**
 - Registrasi otomatis ber peran `peminjam`; profil dapat diperbarui.
@@ -26,7 +26,7 @@ Dibangun dengan **Laravel 13**, **PHP 8.5**, **MySQL**, **Blade**, dan **JavaScr
 
 **Admin**
 - Dashboard: statistik pastel (total buku, sedang dipinjam, total pengguna) + peminjaman terbaru.
-- CRUD Buku, Kategori, dan Pengguna dengan **DataTables server-side** (urut, cari, paginasi di server).
+- CRUD Buku (termasuk **unggah sampul** JPG/PNG/WEBP maksimal 2 MB), Kategori, dan Pengguna dengan **DataTables server-side** (urut, cari, paginasi di server).
 - Mencatat peminjaman manual dan **pengembalian** — stok buku dikembalikan dalam satu
   transaksi database dengan penguncian baris (`lockForUpdate`) agar tidak terjadi race condition.
 - Menu sidebar: Dashboard, Buku, Kategori, Pengguna, Peminjaman.
@@ -108,7 +108,7 @@ routes/
 
 - `users` — nama, email, password, `role` (`admin` | `peminjam`).
 - `categories` — nama kategori buku.
-- `books` — judul, penulis, deskripsi, stok, `category_id` (FK ke `categories`).
+- `books` — judul, penulis, deskripsi, sampul (`cover_image`), stok, `category_id` (FK ke `categories`).
 - `loans` — `user_id`, `book_id`, status (`dipinjam` | `dikembalikan`),
   `borrowed_at`, `returned_at`.
 
@@ -117,7 +117,7 @@ routes/
 Proyek memakai **Pest** (SQLite in-memory, terpisah dari MySQL development).
 
 ```bash
-php artisan test --compact      # 133 test, 500 assertions
+php artisan test --compact      # 145 test, 562 assertions
 vendor/bin/pint --dirty         # format kode mengikuti Laravel Pint
 npm run build                   # bundel aset produksi
 ```
