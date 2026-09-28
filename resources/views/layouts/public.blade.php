@@ -9,6 +9,8 @@
 
         <title>{{ config('app.name', 'SerPus') }}</title>
 
+        <link rel="icon" type="image/svg+xml" href="{{ asset('images/serpus-logo.svg') }}">
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700|plus-jakarta-sans:400,500,600,700&display=swap" rel="stylesheet" />

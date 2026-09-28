@@ -7,6 +7,8 @@
 
         <title>{{ config('app.name', 'SerPus') }}</title>
 
+        <link rel="icon" type="image/svg+xml" href="{{ asset('images/serpus-logo.svg') }}">
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700|plus-jakarta-sans:400,500,600,700&display=swap" rel="stylesheet" />
@@ -18,7 +20,7 @@
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-paper">
             <div>
                 <a href="/">
-                    <x-application-logo class="h-20 w-20" aria-label="Logo SerPus" />
+                    <x-application-logo class="h-20 w-20" />
                 </a>
             </div>
 
