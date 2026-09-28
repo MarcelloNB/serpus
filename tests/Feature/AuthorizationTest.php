@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Book;
+use App\Models\Loan;
 use App\Models\User;
 
 test('guests are redirected to login before reaching the admin area', function () {
@@ -36,7 +37,8 @@ test('the admin menu is only rendered for admins', function () {
         ->assertOk()
         ->assertSee('Dashboard')
         ->assertSee('Administrator')
-        ->assertDontSee('Katalog Buku');
+        ->assertSee('Katalog Buku')
+        ->assertDontSee('Riwayat Peminjaman');
 
     $this->actingAs(User::factory()->create())
         ->get(route('profile.edit'))
@@ -46,14 +48,30 @@ test('the admin menu is only rendered for admins', function () {
         ->assertSee('Katalog Buku');
 });
 
-test('an admin is refused on the peminjam routes', function () {
+test('an admin can browse the catalog but never borrow', function () {
     $admin = User::factory()->admin()->create();
-    $book = Book::factory()->create();
+    $book = Book::factory()->create(['stock' => 5]);
 
-    $this->actingAs($admin)->get(route('catalog.index'))->assertForbidden();
-    $this->actingAs($admin)->get(route('catalog.data'))->assertForbidden();
-    $this->actingAs($admin)->get(route('catalog.show', $book))->assertForbidden();
-    $this->actingAs($admin)->post(route('catalog.borrow', $book))->assertForbidden();
+    $this->actingAs($admin)->get(route('catalog.index'))->assertOk();
+    $this->actingAs($admin)->get(route('catalog.data'))->assertOk();
+    $this->actingAs($admin)->get(route('catalog.show', $book))->assertOk();
+
+    $row = $this->actingAs($admin)->getJson(route('catalog.data'))->json('data.0');
+    expect($row['aksi'])->toContain('Khusus peminjam');
+
+    $this->actingAs($admin)
+        ->from(route('catalog.index'))
+        ->post(route('catalog.borrow', $book))
+        ->assertRedirect(route('catalog.index'))
+        ->assertSessionHas('error');
+
+    expect($book->fresh()->stock)->toBe(5)
+        ->and(Loan::count())->toBe(0);
+});
+
+test('an admin is refused on the peminjam loan history routes', function () {
+    $admin = User::factory()->admin()->create();
+
     $this->actingAs($admin)->get(route('loans.index'))->assertForbidden();
     $this->actingAs($admin)->get(route('loans.data'))->assertForbidden();
 });

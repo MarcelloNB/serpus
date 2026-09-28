@@ -9,25 +9,25 @@
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700|plus-jakarta-sans:400,500,600,700&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="bg-slate-50 font-sans antialiased text-ink">
+    <body class="bg-paper font-sans antialiased text-ink">
         <div x-data="{ sidebarOpen: false }" class="min-h-screen">
             <div
                 x-show="sidebarOpen"
                 x-cloak
                 @click="sidebarOpen = false"
-                class="fixed inset-0 z-30 bg-ocean/50 lg:hidden"
+                class="fixed inset-0 z-30 bg-forest/50 lg:hidden"
                 aria-hidden="true"
             ></div>
 
             <x-sidebar />
 
             <div class="flex min-h-screen flex-col lg:pl-64">
-                <header class="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-4 border-b border-slate-200 bg-white px-4 lg:px-6">
+                <header class="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-4 border-b border-forest/15 bg-paper px-4 lg:px-6">
                     <button
                         type="button"
                         @click="sidebarOpen = ! sidebarOpen"

@@ -13,12 +13,21 @@ export default {
     theme: {
         extend: {
             colors: {
-                brand: '#C0E8F9',
-                ink: '#465362',
-                ocean: '#0F6FA8',
+                paper: '#FBF7F0',
+                sand: '#F1E9DA',
+                brand: '#BB5318',
+                ink: '#22302A',
+                forest: '#1F4D3A',
+                moss: '#2E6B4F',
+                teal: '#2E6E6B',
+                plum: '#6B4E7A',
+                berry: '#8C3B4A',
+                bark: '#A8552B',
+                mustard: '#B98B2E',
             },
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['"Plus Jakarta Sans"', ...defaultTheme.fontFamily.sans],
+                display: ['Fraunces', 'Georgia', 'serif'],
             },
         },
     },

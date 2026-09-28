@@ -1,4 +1,11 @@
-@if ((int) $stock < 1)
+@if (auth()->user()?->isAdmin())
+    <span
+        class="inline-flex rounded-md bg-sand px-4 py-2 text-sm font-semibold text-ink/60"
+        title="Akun admin tidak dapat meminjam buku"
+    >
+        Khusus peminjam
+    </span>
+@elseif ((int) $stock < 1)
     <button
         type="button"
         disabled
@@ -13,7 +20,7 @@
 
         <button
             type="submit"
-            class="inline-flex rounded-md bg-brand px-4 py-2 text-sm font-semibold text-ink hover:bg-brand/70 focus:ring-2 focus:ring-brand"
+            class="inline-flex rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand/90 focus:ring-2 focus:ring-brand"
         >
             Pinjam
         </button>
@@ -21,7 +28,7 @@
 @else
     <a
         href="{{ route('login') }}"
-        class="inline-flex rounded-md bg-brand px-4 py-2 text-sm font-semibold text-ink hover:bg-brand/70 focus:ring-2 focus:ring-brand"
+        class="inline-flex rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand/90 focus:ring-2 focus:ring-brand"
     >
         Masuk untuk meminjam
     </a>

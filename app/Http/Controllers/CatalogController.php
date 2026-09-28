@@ -51,6 +51,7 @@ class CatalogController extends Controller
                 ...$row,
                 'title_text' => $row['title'],
                 'cover_url' => $row['cover_image'] ? asset('storage/'.$row['cover_image']) : null,
+                'spine_color' => Book::spineColorFor($row['category_id'] ?? null),
                 'title' => '<a href="'.route('catalog.show', $row['id']).'" class="hover:text-ink/70">'.e($row['title']).'</a>',
                 'stock' => view('components.stock-badge', ['stock' => $row['stock']])->render(),
                 'aksi' => view('components.borrow-button', ['id' => $row['id'], 'stock' => $row['stock']])->render(),
@@ -69,6 +70,10 @@ class CatalogController extends Controller
 
     public function borrow(Request $request, Book $book): RedirectResponse
     {
+        if ($request->user()->isAdmin()) {
+            return back()->with('error', 'Akun admin hanya dapat melihat katalog, bukan meminjam buku.');
+        }
+
         $this->loans->borrow($request->user(), $book);
 
         return back()->with('success', 'Buku berhasil dipinjam.');
