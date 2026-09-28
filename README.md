@@ -14,9 +14,11 @@ Dibangun dengan **Laravel 13**, **PHP 8.5**, **MySQL**, **Blade**, dan **JavaScr
 ## Fitur
 
 **Publik (tamu)**
-- Landing page company-profile: hero, statistik perpustakaan, 3 langkah cara meminjam, buku terbaru.
-- Katalog buku berbentuk kartu (grid 4 kolom) dengan **live search AJAX** tanpa reload halaman.
-- Halaman detail buku (sampul, judul, penulis, kategori, deskripsi, stok).
+- Landing page: hero carousel full-screen (slide sampul buku, CTA per peran), Buku Terpopuler
+  (10 kartu berperingkat), berita kegiatan perpustakaan, dan buku terbaru.
+- Katalog buku berbentuk kartu cover-first (grid 2–4 kolom, seluruh kartu dapat diklik)
+  dengan **live search AJAX** tanpa reload halaman.
+- Halaman detail buku bergaya pita editorial (sampul, judul, penulis, kategori, deskripsi, stok).
 
 **Peminjam**
 - Registrasi otomatis ber peran `peminjam`; profil dapat diperbarui.
@@ -34,8 +36,10 @@ Dibangun dengan **Laravel 13**, **PHP 8.5**, **MySQL**, **Blade**, dan **JavaScr
 **Otorisasi & validasi**
 - Pembatasan akses lewat middleware, tanpa Gate/policy:
   - `admin` — hanya admin yang boleh membuka `/admin/*` (lainnya 403).
-  - `non-admin` — admin **tidak** bisa membuka katalog (`/katalog`, `/books/*`) dan
-    riwayat (`/loans*`); tamu dan peminjam tetap bisa.
+  - `non-admin` — admin **tidak** bisa membuka riwayat (`/loans*`); tamu dan peminjam tetap bisa.
+  - Katalog (`/katalog`, `/books/*`) terbuka untuk semua peran; admin dapat melihatnya,
+    tetapi tombol pinjam menjadi label "Khusus peminjam" dan `POST /borrow` oleh admin
+    dibalik dengan alert error (bukan 403).
 - Validasi server-side memakai Form Request di seluruh endpoint tulis.
 
 ## Kebutuhan
@@ -96,7 +100,7 @@ database/
 resources/
 ├── views/                  Blade: layouts, components, catalog, admin, auth, home
 ├── css/app.css             Tailwind + aturan khusus container DataTables
-└── js/app.js               Alpine, inisialisasi DataTables, live search katalog
+└── js/app.js               Alpine, inisialisasi DataTables, live search katalog, carousel landing
 
 routes/
 ├── web.php                 Landing, katalog, riwayat, profil, /dashboard (redirect per peran)
@@ -117,7 +121,7 @@ routes/
 Proyek memakai **Pest** (SQLite in-memory, terpisah dari MySQL development).
 
 ```bash
-php artisan test --compact      # 145 test, 562 assertions
+php artisan test --compact      # 146 test, 571 assertions
 vendor/bin/pint --dirty         # format kode mengikuti Laravel Pint
 npm run build                   # bundel aset produksi
 ```

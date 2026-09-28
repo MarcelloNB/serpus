@@ -23,7 +23,7 @@
         <div class="absolute inset-0 bg-gradient-to-r from-forest via-forest/85 to-forest/45"></div>
 
         <div class="relative mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-            <p class="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-sand">
+            <p class="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-white">
                 <span class="h-px w-10 bg-brand"></span>
                 Perpustakaan Digital
             </p>
