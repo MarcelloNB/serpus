@@ -87,20 +87,81 @@ function renderBooks(books) {
     catalogGrid.innerHTML = books
         .map(
             (book) => `
-                <div class="flex flex-col rounded-lg border border-forest/10 bg-white p-4 transition hover:border-brand/60 hover:shadow-md">
-                    ${book.cover_url
-                        ? `<img src="${book.cover_url}" alt="Sampul ${escapeHtml(book.title_text ?? '')}" class="mb-3 h-40 w-full rounded-md object-cover shadow-sm" loading="lazy">`
-                        : `<div class="mb-3 flex h-40 w-full flex-col justify-between rounded-md p-3" style="background-color:${book.spine_color}"><span class="h-1.5 w-10 rounded-full bg-paper/70"></span><span class="font-display text-4xl font-semibold text-paper">${escapeHtml((book.title_text ?? '').charAt(0).toUpperCase())}</span></div>`}
-                    <h3 class="font-display text-sm font-semibold leading-snug">${book.title}</h3>
-                    <p class="mt-1 text-xs text-ink/70">${escapeHtml(book.author)}</p>
-                    <div class="mt-3 flex items-center justify-between gap-2 text-xs">
-                        <span class="rounded-full px-2 py-0.5 font-medium text-ink" style="background-color:${book.spine_color}26">${escapeHtml(book.category_name ?? 'Tanpa kategori')}</span>
-                        ${book.stock}
+                <a href="/books/${book.id}" class="group block rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-paper">
+                    <div class="relative aspect-[2/3] overflow-hidden rounded-lg shadow-md transition duration-200 group-hover:-translate-y-1.5 group-hover:shadow-xl" style="background-color:${book.spine_color}">
+                        ${book.cover_url
+                            ? `<img src="${book.cover_url}" alt="Sampul ${escapeHtml(book.title_text ?? '')}" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">`
+                            : `<div class="flex h-full w-full flex-col justify-between p-4" aria-hidden="true"><span class="h-1.5 w-12 rounded-full bg-paper/70"></span><span class="font-display text-6xl font-semibold text-white">${escapeHtml((book.title_text ?? '').charAt(0).toUpperCase())}</span></div>`}
                     </div>
-                </div>`,
+                    <div class="mt-3">
+                        <h3 class="font-display text-sm font-semibold leading-snug transition group-hover:text-brand">${escapeHtml(book.title_text ?? '')}</h3>
+                        <p class="mt-1 text-xs text-ink/70">${escapeHtml(book.author)}</p>
+                        <div class="mt-2.5 flex items-center justify-between gap-2 text-xs">
+                            <span class="rounded-full px-2 py-0.5 font-medium text-ink" style="background-color:${book.spine_color}26">${escapeHtml(book.category_name ?? 'Tanpa kategori')}</span>
+                            ${book.stock}
+                        </div>
+                    </div>
+                </a>`,
         )
         .join('');
 }
+
+document.querySelectorAll('[data-carousel]').forEach((carousel) => {
+    const slides = Array.from(carousel.querySelectorAll('[data-slide]'));
+    const dots = Array.from(carousel.querySelectorAll('[data-carousel-dot]'));
+
+    if (slides.length < 2) {
+        return;
+    }
+
+    let current = 0;
+    let timer;
+
+    const show = (index) => {
+        current = (index + slides.length) % slides.length;
+
+        slides.forEach((slide, i) => {
+            slide.classList.toggle('opacity-100', i === current);
+            slide.classList.toggle('opacity-0', i !== current);
+        });
+
+        dots.forEach((dot, i) => {
+            dot.classList.toggle('bg-paper', i === current);
+            dot.classList.toggle('bg-paper/40', i !== current);
+        });
+    };
+
+    const start = () => {
+        timer = window.setInterval(() => show(current + 1), 5000);
+    };
+
+    const stop = () => window.clearInterval(timer);
+
+    carousel.querySelector('[data-carousel-next]')?.addEventListener('click', () => {
+        show(current + 1);
+        stop();
+        start();
+    });
+
+    carousel.querySelector('[data-carousel-prev]')?.addEventListener('click', () => {
+        show(current - 1);
+        stop();
+        start();
+    });
+
+    dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => {
+            show(i);
+            stop();
+            start();
+        });
+    });
+
+    carousel.addEventListener('pointerenter', stop);
+    carousel.addEventListener('pointerleave', start);
+
+    start();
+});
 
 function escapeHtml(value) {
     const div = document.createElement('div');

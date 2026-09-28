@@ -3,13 +3,16 @@
 use App\Models\Book;
 use App\Models\User;
 
-test('the landing page shows the hero, statistics and the latest books', function () {
+test('the landing page shows the hero carousel, sections and the latest books', function () {
     Book::factory()->create(['title' => 'Biologi Molekuler']);
 
     $this->get('/')
         ->assertOk()
         ->assertSee('SerPus — Sistem Elektronik Perpustakaan')
-        ->assertSee('Cara Meminjam Buku')
+        ->assertSee('data-carousel', false)
+        ->assertSee('Cukup dari browser, kapan saja.')
+        ->assertSee('Buku Terpopuler')
+        ->assertSee('Berita Kegiatan Perpustakaan')
         ->assertSee('Buku Terbaru')
         ->assertSee('Biologi Molekuler')
         ->assertSee('Daftar Sekarang');
