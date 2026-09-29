@@ -8,6 +8,7 @@
         :columns="[
             ['data' => 'book_title', 'title' => 'Buku'],
             ['data' => 'borrowed_at_label', 'title' => 'Tanggal Pinjam'],
+            ['data' => 'due_at_label', 'title' => 'Batas Kembali', 'orderable' => false],
             ['data' => 'returned_at_label', 'title' => 'Tanggal Kembali'],
             ['data' => 'status_label', 'title' => 'Status', 'orderable' => false],
         ]"

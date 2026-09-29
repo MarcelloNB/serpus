@@ -30,12 +30,20 @@ class LoanHistoryController extends Controller
             [
                 'book_title' => 'books.title',
                 'borrowed_at_label' => 'loans.borrowed_at',
+                'due_at_label' => 'loans.due_at',
                 'returned_at_label' => 'loans.returned_at',
                 'status_label' => 'loans.status',
             ],
             each: fn (array $row) => [
                 ...$row,
+                'book_title' => e($row['book_title']),
                 'borrowed_at_label' => self::formatDate($row['borrowed_at']),
+                'due_at_label' => view('components.due-date-badge', [
+                    'label' => self::formatDate($row['due_at']),
+                    'overdue' => $row['status'] === LoanStatus::Dipinjam->value
+                        && $row['due_at'] !== null
+                        && Carbon::parse($row['due_at'])->isPast(),
+                ])->render(),
                 'returned_at_label' => self::formatDate($row['returned_at']),
                 'status_label' => view('components.loan-status-badge', [
                     'status' => LoanStatus::from($row['status']),

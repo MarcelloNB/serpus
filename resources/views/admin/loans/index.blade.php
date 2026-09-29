@@ -6,7 +6,7 @@
     <div class="mb-4 flex justify-end">
         <a
             href="{{ route('admin.loans.create') }}"
-            class="rounded-md bg-ocean px-4 py-2 text-sm font-semibold text-white hover:bg-ocean/90"
+            class="rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand/90"
         >
             Tambah Peminjaman
         </a>
@@ -19,6 +19,7 @@
             ['data' => 'user_name', 'title' => 'Peminjam'],
             ['data' => 'book_title', 'title' => 'Buku'],
             ['data' => 'borrowed_at_label', 'title' => 'Dipinjam Pada'],
+            ['data' => 'due_at_label', 'title' => 'Batas Kembali', 'orderable' => false],
             ['data' => 'returned_at_label', 'title' => 'Dikembalikan Pada'],
             ['data' => 'status_label', 'title' => 'Status', 'orderable' => false],
             ['data' => 'aksi', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false],

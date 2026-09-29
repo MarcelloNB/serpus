@@ -33,3 +33,7 @@
         Masuk untuk meminjam
     </a>
 @endif
+
+<p class="mt-2 text-xs text-ink/60">
+    Batas peminjaman: maksimal {{ config('loans.max_active') }} buku selama {{ config('loans.days') }} hari
+</p>

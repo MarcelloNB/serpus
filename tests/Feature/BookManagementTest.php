@@ -267,3 +267,19 @@ test('deleting a book removes its cover file', function () {
     Storage::disk('public')->assertMissing('covers/sampul.jpg');
     $this->assertDatabaseMissing('books', ['id' => $book->id]);
 });
+
+test('the admin books data endpoint escapes html in titles and authors', function () {
+    Book::factory()->create([
+        'title' => '<img src=x onerror=alert(1)>',
+        'author' => '<svg onload=alert(2)>',
+    ]);
+
+    $row = $this->actingAs(User::factory()->admin()->create())
+        ->getJson(route('admin.books.data', ['draw' => 1]))
+        ->assertOk()
+        ->json('data.0');
+
+    expect($row['title'])->toContain('&lt;img src=x')
+        ->and($row['title'])->not->toContain('<img src=x')
+        ->and($row['author'])->toContain('&lt;svg onload');
+});

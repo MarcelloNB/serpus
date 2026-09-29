@@ -39,6 +39,9 @@ class BookController extends Controller
             ],
             each: fn (array $row) => [
                 ...$row,
+                'title' => e($row['title']),
+                'author' => e($row['author']),
+                'category_name' => isset($row['category_name']) ? e($row['category_name']) : null,
                 'aksi' => view('admin.books.row-actions', $row)->render(),
             ],
         );

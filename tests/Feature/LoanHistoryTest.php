@@ -43,6 +43,24 @@ test('an admin is refused on the history endpoint', function () {
         ->assertForbidden();
 });
 
+test('the history shows the due date and an overdue badge only for late books', function () {
+    $peminjam = User::factory()->create();
+    $book = Book::factory()->create();
+    $active = Loan::factory()->for($peminjam, 'user')->for($book, 'book')->create([
+        'borrowed_at' => now()->subDay(),
+        'due_at' => now()->addDays(13),
+    ]);
+    $late = Loan::factory()->overdue()->for($peminjam, 'user')->for($book, 'book')->create();
+    $finished = Loan::factory()->returned()->for($peminjam, 'user')->for($book, 'book')->create();
+
+    $rows = collect($this->actingAs($peminjam)->getJson(route('loans.data'))->json('data'));
+
+    expect($rows->firstWhere('id', $late->id)['due_at_label'])->toContain('Terlambat')
+        ->and($rows->firstWhere('id', $active->id)['due_at_label'])->not->toContain('Terlambat')
+        ->and($rows->firstWhere('id', $active->id)['due_at_label'])->not->toBe('-')
+        ->and($rows->firstWhere('id', $finished->id)['due_at_label'])->not->toContain('Terlambat');
+});
+
 test('the history page is read-only and offers no return action', function () {
     $this->actingAs(User::factory()->create())
         ->get(route('loans.index'))
@@ -62,4 +80,18 @@ test('the sidebar shows the history menu only to peminjam', function () {
         ->get(route('profile.edit'))
         ->assertOk()
         ->assertDontSee('Riwayat Peminjaman');
+});
+
+test('the history data endpoint escapes html in book titles', function () {
+    $peminjam = User::factory()->create();
+    $book = Book::factory()->create(['title' => '<img src=x onerror=alert(1)>']);
+    Loan::factory()->for($peminjam, 'user')->for($book, 'book')->create();
+
+    $row = $this->actingAs($peminjam)
+        ->getJson(route('loans.data'))
+        ->assertOk()
+        ->json('data.0');
+
+    expect($row['book_title'])->toContain('&lt;img src=x')
+        ->and($row['book_title'])->not->toContain('<img src=x');
 });

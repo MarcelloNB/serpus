@@ -13,13 +13,14 @@ class Loan extends Model
     /** @use HasFactory<LoanFactory> */
     use HasFactory;
 
-    protected $fillable = ['user_id', 'book_id', 'borrowed_at', 'returned_at', 'status'];
+    protected $fillable = ['user_id', 'book_id', 'borrowed_at', 'due_at', 'returned_at', 'status'];
 
     protected function casts(): array
     {
         return [
             'status' => LoanStatus::class,
             'borrowed_at' => 'datetime',
+            'due_at' => 'datetime',
             'returned_at' => 'datetime',
         ];
     }

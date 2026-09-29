@@ -77,7 +77,21 @@ test('an admin can record a loan and the book stock drops', function () {
         'status' => 'dipinjam',
     ]);
 
-    expect($book->fresh()->stock)->toBe(2);
+    expect($book->fresh()->stock)->toBe(2)
+        ->and(Loan::firstOrFail()->due_at->toDateString())->toBe(now()->addDays(14)->toDateString());
+});
+
+test('recording a loan beyond the five-book limit is rejected', function () {
+    $user = User::factory()->create();
+    $book = Book::factory()->create(['stock' => 3]);
+    Loan::factory()->count(5)->for($user, 'user')->create();
+
+    $this->actingAs(User::factory()->admin()->create())
+        ->post(route('admin.loans.store'), ['user_id' => $user->id, 'book_id' => $book->id])
+        ->assertSessionHasErrors('book_id');
+
+    expect(Loan::where('user_id', $user->getKey())->count())->toBe(5)
+        ->and($book->fresh()->stock)->toBe(3);
 });
 
 test('recording a loan without a borrower or a book is rejected', function () {
@@ -161,4 +175,23 @@ test('the loan form renders for an admin', function () {
         ->assertSee('Tambah Peminjaman')
         ->assertSee('Budi Santoso')
         ->assertSee('Biologi Molekuler');
+});
+
+test('the admin loans data endpoint shows the due date and the overdue badge', function () {
+    $borrower = User::factory()->create();
+    $book = Book::factory()->create();
+    $active = Loan::factory()->for($borrower, 'user')->for($book, 'book')->create([
+        'borrowed_at' => now()->subDay(),
+        'due_at' => now()->addDays(13),
+    ]);
+    $late = Loan::factory()->overdue()->for($borrower, 'user')->for($book, 'book')->create();
+
+    $rows = collect($this->actingAs(User::factory()->admin()->create())
+        ->getJson(route('admin.loans.data', ['draw' => 1]))
+        ->assertOk()
+        ->json('data'));
+
+    expect($rows->firstWhere('id', $active->id)['due_at_label'])->not->toContain('Terlambat')
+        ->and($rows->firstWhere('id', $active->id)['due_at_label'])->not->toBe('-')
+        ->and($rows->firstWhere('id', $late->id)['due_at_label'])->toContain('Terlambat');
 });

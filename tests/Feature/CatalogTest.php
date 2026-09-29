@@ -164,6 +164,32 @@ test('borrowing a book whose stock is exhausted is rejected', function () {
         ->and(Loan::count())->toBe(0);
 });
 
+test('borrowing is rejected when the borrower already holds the maximum books', function () {
+    $user = User::factory()->create();
+    $book = Book::factory()->create(['stock' => 2]);
+    Loan::factory()->count(5)->for($user, 'user')->create();
+
+    $this->actingAs($user)
+        ->post(route('catalog.borrow', $book))
+        ->assertSessionHasErrors('book_id');
+
+    expect($book->fresh()->stock)->toBe(2)
+        ->and(Loan::where('user_id', $user->getKey())->count())->toBe(5);
+});
+
+test('a successful borrow is due fourteen days later', function () {
+    $user = User::factory()->create();
+    $book = Book::factory()->create(['stock' => 1]);
+
+    $this->actingAs($user)
+        ->post(route('catalog.borrow', $book))
+        ->assertSessionHas('success');
+
+    $loan = Loan::where('user_id', $user->getKey())->firstOrFail();
+
+    expect($loan->due_at->toDateString())->toBe(now()->addDays(14)->toDateString());
+});
+
 test('the book detail page shows every piece of information for guests', function () {
     $category = Category::factory()->create(['name' => 'Sains']);
     $book = Book::factory()->create([
@@ -192,6 +218,7 @@ test('the book detail page offers the borrow form to logged-in users', function 
         ->get(route('catalog.show', $book))
         ->assertOk()
         ->assertSee('Pinjam')
+        ->assertSee('Batas peminjaman')
         ->assertDontSee('Masuk untuk meminjam');
 });
 
@@ -236,4 +263,33 @@ test('a book without a cover shows a placeholder instead of an image', function 
         ->assertOk()
         ->assertDontSee('storage/covers/', false)
         ->assertSee('Tanpa Sampul');
+});
+
+test('html in a book title is escaped on the server-rendered catalog and detail pages', function () {
+    $book = Book::factory()->create([
+        'title' => '<img src=x onerror=alert(1)>',
+        'stock' => 3,
+    ]);
+
+    $this->get(route('catalog.index'))
+        ->assertOk()
+        ->assertDontSee('<img src=x', false)
+        ->assertSee('&lt;img src=x', false);
+
+    $this->get(route('catalog.show', $book))
+        ->assertOk()
+        ->assertDontSee('<img src=x', false)
+        ->assertSee('&lt;img src=x', false);
+});
+
+test('the catalog data endpoint escapes html titles while title_text stays plain', function () {
+    Book::factory()->create(['title' => '<img src=x onerror=alert(1)>']);
+
+    $row = $this->getJson(route('catalog.data', ['draw' => 1]))
+        ->assertOk()
+        ->json('data.0');
+
+    expect($row['title'])->toContain('&lt;img src=x')
+        ->and($row['title'])->not->toContain('<img src=x')
+        ->and($row['title_text'])->toBe('<img src=x onerror=alert(1)>');
 });

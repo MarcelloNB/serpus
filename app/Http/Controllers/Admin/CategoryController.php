@@ -27,6 +27,7 @@ class CategoryController extends Controller
             ['id' => 'id', 'name' => 'name'],
             each: fn (array $row) => [
                 ...$row,
+                'name' => e($row['name']),
                 'aksi' => view('admin.categories.row-actions', $row)->render(),
             ],
         );

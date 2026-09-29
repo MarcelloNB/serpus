@@ -36,3 +36,13 @@ test('registration assigns the peminjam role', function () {
     expect($user)->not->toBeNull()
         ->and($user->role)->toBe(UserRole::Peminjam);
 });
+
+test('repeated registration attempts are rate limited after five attempts', function () {
+    $payload = ['name' => '', 'email' => '', 'password' => '', 'password_confirmation' => ''];
+
+    foreach (range(1, 5) as $attempt) {
+        $this->post('/register', $payload)->assertStatus(302);
+    }
+
+    $this->post('/register', $payload)->assertStatus(429);
+});

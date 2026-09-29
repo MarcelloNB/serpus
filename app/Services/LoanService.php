@@ -12,11 +12,23 @@ use Illuminate\Validation\ValidationException;
 class LoanService
 {
     /**
-     * Catat peminjaman baru: kunci baris buku agar stok tidak bisa diambil dua kali.
+     * Catat peminjaman baru: kunci baris user & buku agar batas peminjaman
+     * dan stok tidak bisa dilewati oleh dua request yang berjalan bersamaan.
      */
     public function borrow(User $user, Book $book): Loan
     {
         return DB::transaction(function () use ($user, $book): Loan {
+            $lockedUser = User::query()->whereKey($user->getKey())->lockForUpdate()->firstOrFail();
+
+            $maxActive = (int) config('loans.max_active');
+            $activeLoans = $lockedUser->loans()->where('status', LoanStatus::Dipinjam)->count();
+
+            if ($activeLoans >= $maxActive) {
+                throw ValidationException::withMessages([
+                    'book_id' => 'Batas peminjaman tercapai: maksimal '.$maxActive.' buku dalam waktu bersamaan. Kembalikan salah satu buku terlebih dahulu.',
+                ]);
+            }
+
             $lockedBook = Book::query()->whereKey($book->getKey())->lockForUpdate()->firstOrFail();
 
             if ($lockedBook->stock < 1) {
@@ -28,9 +40,10 @@ class LoanService
             $lockedBook->decrement('stock');
 
             return Loan::create([
-                'user_id' => $user->getKey(),
+                'user_id' => $lockedUser->getKey(),
                 'book_id' => $lockedBook->getKey(),
                 'borrowed_at' => now(),
+                'due_at' => now()->addDays((int) config('loans.days')),
                 'status' => LoanStatus::Dipinjam,
             ]);
         });

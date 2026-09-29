@@ -22,7 +22,10 @@ Dibangun dengan **Laravel 13**, **PHP 8.5**, **MySQL**, **Blade**, dan **JavaScr
 
 **Peminjam**
 - Registrasi otomatis ber peran `peminjam`; profil dapat diperbarui.
-- Meminjam buku dari halaman detail (stok berkurang, ada validasi stok habis).
+- Meminjam buku dari halaman detail (stok berkurang, validasi stok habis, **maksimal 5 buku
+  dipinjam bersamaan** — dibatasi lewat `config/loans.php`).
+- Setiap peminjaman **jatuh tempo 14 hari** sejak tanggal pinjam (lihat kolom Batas Kembali);
+  lewat tenggat ditandai badge merah **Terlambat** di riwayat.
 - Riwayat peminjaman pribadi (read-only, pengembalian dicatat admin).
 - Menu sidebar: Katalog Buku dan Riwayat Peminjaman.
 
@@ -41,6 +44,10 @@ Dibangun dengan **Laravel 13**, **PHP 8.5**, **MySQL**, **Blade**, dan **JavaScr
     tetapi tombol pinjam menjadi label "Khusus peminjam" dan `POST /borrow` oleh admin
     dibalik dengan alert error (bukan 403).
 - Validasi server-side memakai Form Request di seluruh endpoint tulis.
+- Rate limiter `throttle:5,1` pada `POST /login` dan `POST /register` (5 percobaan
+  per menit per IP; kelima kali percobaan gagal berturut-turut dibalas 429).
+- Teks dari database selalu di-`e()` saat dikirim ke kolom DataTables agar payload
+  HTML/JavaScript di judul-buku, nama, dsb. tidak dieksekusi browser (XSS).
 
 ## Kebutuhan
 
@@ -114,14 +121,14 @@ routes/
 - `categories` — nama kategori buku.
 - `books` — judul, penulis, deskripsi, sampul (`cover_image`), stok, `category_id` (FK ke `categories`).
 - `loans` — `user_id`, `book_id`, status (`dipinjam` | `dikembalikan`),
-  `borrowed_at`, `returned_at`.
+  `borrowed_at`, `due_at`, `returned_at`.
 
 ## Menjalankan pengujian
 
 Proyek memakai **Pest** (SQLite in-memory, terpisah dari MySQL development).
 
 ```bash
-php artisan test --compact      # 146 test, 571 assertions
+php artisan test --compact      # 166 test, 647 assertions
 vendor/bin/pint --dirty         # format kode mengikuti Laravel Pint
 npm run build                   # bundel aset produksi
 ```
