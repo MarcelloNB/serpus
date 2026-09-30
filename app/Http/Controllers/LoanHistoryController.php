@@ -56,6 +56,8 @@ class LoanHistoryController extends Controller
 
     private static function formatDate(?string $value): string
     {
-        return $value === null ? '-' : Carbon::parse($value)->format('d/m/Y H:i');
+        return $value === null
+            ? '-'
+            : Carbon::parse($value)->setTimezone(config('app.timezone'))->format('d/m/Y H:i');
     }
 }

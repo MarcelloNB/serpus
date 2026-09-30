@@ -193,5 +193,7 @@ test('the admin loans data endpoint shows the due date and the overdue badge', f
 
     expect($rows->firstWhere('id', $active->id)['due_at_label'])->not->toContain('Terlambat')
         ->and($rows->firstWhere('id', $active->id)['due_at_label'])->not->toBe('-')
+        ->and($rows->firstWhere('id', $active->id)['borrowed_at_label'])
+        ->toBe($active->borrowed_at->format('d/m/Y H:i'))
         ->and($rows->firstWhere('id', $late->id)['due_at_label'])->toContain('Terlambat');
 });

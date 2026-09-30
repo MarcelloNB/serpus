@@ -61,6 +61,23 @@ test('the history shows the due date and an overdue badge only for late books', 
         ->and($rows->firstWhere('id', $finished->id)['due_at_label'])->not->toContain('Terlambat');
 });
 
+test('the history dates are rendered in the application timezone', function () {
+    $peminjam = User::factory()->create();
+    $book = Book::factory()->create();
+    $borrowedAt = now();
+    $dueAt = $borrowedAt->copy()->addDays(13);
+    $loan = Loan::factory()->for($peminjam, 'user')->for($book, 'book')->create([
+        'borrowed_at' => $borrowedAt,
+        'due_at' => $dueAt,
+    ]);
+
+    $row = collect($this->actingAs($peminjam)->getJson(route('loans.data'))->json('data'))
+        ->firstWhere('id', $loan->id);
+
+    expect($row['borrowed_at_label'])->toBe($borrowedAt->format('d/m/Y H:i'))
+        ->and($row['due_at_label'])->toContain($dueAt->format('d/m/Y H:i'));
+});
+
 test('the history page is read-only and offers no return action', function () {
     $this->actingAs(User::factory()->create())
         ->get(route('loans.index'))
